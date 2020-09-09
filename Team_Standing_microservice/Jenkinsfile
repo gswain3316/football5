@@ -1,0 +1,33 @@
+pipeline {
+	agent any
+	
+	triggers {
+		pollSCM '*****'
+	}
+	stages {
+		stage('Build'){
+			steps {
+				sh 'maven build'
+			}
+		}
+		stage('Test'){
+			steps {
+				sh 'maven build'
+			}
+		}
+		stage('Build Dcoker Image'){
+			steps {
+				sh 'maven build'
+			}
+		}
+		stage('Push Docker Image'){
+			environment {
+				DOCKER_HUB_LOGIN=credentials('docker-hub')
+			}
+			steps {
+				sh 'docker login --username=gswain3316 --password=Qwerty@123 '
+				sh 'docker push gswain3316/football5:app'
+			}
+		}
+	}
+}
