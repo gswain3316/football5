@@ -1,33 +1,36 @@
 pipeline {
 	agent any
 	
-	triggers {
-		pollSCM '*****'
+	tools{
+		maven "3.6.3"
 	}
+	
 	stages {
+	
+	 	stage('Checkout') {
+            git url: 'https://github.com/gswain3316/football5/tree/master/Team_Standing_microservice', branch: 'master'
+        }
+	
+		triggers {
+		pollSCM '*****'
+		}
+	
 		stage('Build'){
-			steps {
-				sh 'maven build'
-			}
+			sh 'mvn clean install'
 		}
-		stage('Test'){
-			steps {
-				sh 'maven build'
-			}
+		
+		stage('Build Docker Image'){
+			sh 'docker build -t gswain3316/football5:1.0.0'
 		}
-		stage('Build Dcoker Image'){
-			steps {
-				sh 'maven build'
-			}
-		}
-		stage('Push Docker Image'){
-			environment {
-				DOCKER_HUB_LOGIN=credentials('docker-hub')
-			}
-			steps {
-				sh 'docker login --username=gswain3316 --password=Qwerty@123 '
-				sh 'docker push gswain3316/football5:app'
-			}
-		}
+		stage ('Push Docker Image') {
+            sh 'docker login -u gswain3316 -p Qwerty@123'
+            sh 'docker push gswain3316/football5:1.0.0'
+        }
+        stage ('Run Container on AWS Server') {
+            def dockerRun = 'docker run -p 8080:8080 -d --name footballApp gswain3316/football5:1.0.0'
+            sshagent(['dev-server']){
+            	sh "ssh -o StrictHostKeyChecking=no Ubuntu@18.217.63.227 ${dockerRun}"
+            }
+        }
 	}
 }
