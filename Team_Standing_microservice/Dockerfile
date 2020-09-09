@@ -1,13 +1,13 @@
-# For Java 11, try this
+# Base image as jdk version 14  
 FROM openjdk:14
 
-# Refer to Maven build -> finalName
+# Refer to Maven build 
 ARG JAR_FILE=target/Team_Standing_microservice-0.0.1-SNAPSHOT.jar
 
 # cd /opt/app
 WORKDIR /opt/app
 
-# cp target/spring-boot-web.jar /opt/app/app.jar
+# cp target/footballApp.jar /opt/app/app.jar
 COPY ${JAR_FILE} app.jar
 
 # java -jar /opt/app/app.jar
